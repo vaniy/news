@@ -139,4 +139,8 @@ router.get("/api/show", function(req, res, next){
 	}
 })
 
+router.get("/api/pdf", function(req, res, next){
+	res.redirect(`http://nhzupei456.w46.mc-test.com/uplaod/file/${req.query.name}.pdf`)
+})
+
 module.exports = router;
