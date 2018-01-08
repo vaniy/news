@@ -98,6 +98,24 @@ router.get("/api/categoryDetails", function(req, res, next) {
     });
 })
 
+
+router.get("/api/detail", function(req, res, next) {
+            const sql = require('mssql')
+            new sql.ConnectionPool(config).connect().then(pool => {
+                        return pool.request()
+                            .input('input_parameter', sql.Int, req.query.id)
+                            .query(`select * from glzhidu ${req.query.id ? `where leixing = @input_parameter` : ''}`)
+}).then(result => {
+  let rows = result.recordset
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.status(200).json(rows);
+  sql.close();
+}).catch(err => {
+  res.status(500).send({ message: `${err}`})
+  sql.close();
+});
+});
+
 router.get("/api/content", function(req, res, next) {
             const sql = require('mssql')
             new sql.ConnectionPool(config).connect().then(pool => {
