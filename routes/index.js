@@ -96,9 +96,8 @@ router.get("/api/category", function(req, res, next) {
             results.push(child)
                 // }
         });
-        console.log(results)
-            // res.setHeader('Access-Control-Allow-Origin', '*')
-            // res.status(200).json(results);
+        // res.setHeader('Access-Control-Allow-Origin', '*')
+        // res.status(200).json(results);
         sql.close();
         new sql.ConnectionPool(config).connect().then(pool => {
             // return pool.request().query("select * from productsort")
