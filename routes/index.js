@@ -227,8 +227,8 @@ router.get("/api/content", function(req, res, next) {
             const sql = require('mssql')
             new sql.ConnectionPool(config).connect().then(pool => {
                         return pool.request()
-                            .input('input_parameter', sql.NVarChar, req.query.keywords)
-                            .query(`select * from glzhidu ${req.query.keywords ? `where bianh = @input_parameter or biaoti = @input_parameter` : ''}`)
+                            .input('input_parameter', sql.NVarChar, `%${req.query.keywords}%`)
+                            .query(`select * from glzhidu ${req.query.keywords ? `where bianh like @input_parameter or biaoti like @input_parameter` : ''}`)
 		}).then(result => {
 		  let rows = result.recordset
 		  res.setHeader('Access-Control-Allow-Origin', '*')
