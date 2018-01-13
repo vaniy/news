@@ -16,21 +16,89 @@ const config = {
     // }
 }
 
+// router.get("/api/category", function(req, res, next) {
+//     const sql = require('mssql')
+//     new sql.ConnectionPool(config).connect().then(pool => {
+//         // return pool.request().query("select * from productsort")
+//         return pool.request().query("SELECT DISTINCT parid FROM productsort ")
+//     }).then(result => {
+//         let rows = result.recordset
+//         let results = [];
+//         rows.map((child, index) => {
+//             if (child.parid !== 0) {
+//                 results.push({ parentId: child.parid })
+//             }
+//         });
+//         // res.setHeader('Access-Control-Allow-Origin', '*')
+//         // res.status(200).json(results);
+//         sql.close();
+//         new sql.ConnectionPool(config).connect().then(pool => {
+//             // return pool.request().query("select * from productsort")
+//             return pool.request().query(`SELECT * FROM productsort`)
+//         }).then(result => {
+//             let rows = result.recordset
+//             results.map((cld, idx) => {
+//                 cld.child = [];
+//                 rows.map((child, index) => {
+//                     if (child.id === cld.parentId) {
+//                         cld.id = child.id;
+//                         cld.category = child['类别'];
+//                         cld.sort = child.sort;
+//                         cld.grade = child.grade;
+//                         cld.parid = child.parid;
+//                         cld.cnlen = child.cnlen;
+//                         cld.enlen = child.enlen;
+//                         cld.secret = child.secret;
+//                         cld.zoom = child.zoom;
+//                         cld.cnpic = child.cnpic;
+//                         cld.enpic = child.enpic;
+//                     }
+//                     if (child.parid === cld.parentId) {
+//                         cld.child.push({
+//                             id: child.id,
+//                             category: child['类别'],
+//                             sort: child.sort,
+//                             grade: child.grade,
+//                             parid: child.parid,
+//                             cnlen: child.cnlen,
+//                             enlen: child.enlen,
+//                             secret: child.secret,
+//                             zoom: child.zoom,
+//                             cnpic: child.cnpic,
+//                             enpic: child.enpic
+//                         })
+//                     }
+//                 })
+//             })
+//             res.setHeader('Access-Control-Allow-Origin', '*')
+//             res.status(200).json(results);
+//             sql.close();
+//         }).catch(err => {
+//             res.status(500).send({ message: `${err}` })
+//             sql.close();
+//         });
+//     }).catch(err => {
+//         res.status(500).send({ message: `${err}` })
+//         sql.close();
+//     });
+// });
+
 router.get("/api/category", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
         // return pool.request().query("select * from productsort")
-        return pool.request().query("SELECT DISTINCT parid FROM productsort ")
+        return pool.request().query("SELECT * FROM productsort where parid = 0 ")
     }).then(result => {
         let rows = result.recordset
         let results = [];
         rows.map((child, index) => {
-            if (child.parid !== 0) {
-                results.push({ parentId: child.parid })
-            }
+            // if (child.parid !== 0) {
+            results.push(child)
+                // }
         });
-        // res.setHeader('Access-Control-Allow-Origin', '*')
-        // res.status(200).json(results);
+        console.log(results)
+            // res.setHeader('Access-Control-Allow-Origin', '*')
+            // res.status(200).json(results);
         sql.close();
         new sql.ConnectionPool(config).connect().then(pool => {
             // return pool.request().query("select * from productsort")
@@ -40,20 +108,20 @@ router.get("/api/category", function(req, res, next) {
             results.map((cld, idx) => {
                 cld.child = [];
                 rows.map((child, index) => {
-                    if (child.id === cld.parentId) {
-                        cld.id = child.id;
-                        cld.category = child['类别'];
-                        cld.sort = child.sort;
-                        cld.grade = child.grade;
-                        cld.parid = child.parid;
-                        cld.cnlen = child.cnlen;
-                        cld.enlen = child.enlen;
-                        cld.secret = child.secret;
-                        cld.zoom = child.zoom;
-                        cld.cnpic = child.cnpic;
-                        cld.enpic = child.enpic;
-                    }
-                    if (child.parid === cld.parentId) {
+                    // if (child.id === cld.parid) {
+                    //     cld.id = child.id;
+                    //     cld.category = child['类别'];
+                    //     cld.sort = child.sort;
+                    //     cld.grade = child.grade;
+                    //     cld.parid = child.parid;
+                    //     cld.cnlen = child.cnlen;
+                    //     cld.enlen = child.enlen;
+                    //     cld.secret = child.secret;
+                    //     cld.zoom = child.zoom;
+                    //     cld.cnpic = child.cnpic;
+                    //     cld.enpic = child.enpic;
+                    // }
+                    if (child.parid === cld.id) {
                         cld.child.push({
                             id: child.id,
                             category: child['类别'],
@@ -82,6 +150,46 @@ router.get("/api/category", function(req, res, next) {
         sql.close();
     });
 });
+
+router.get("/api/categorys", function(req, res, next) {
+    const sql = require('mssql')
+    new sql.ConnectionPool(config).connect().then(pool => {
+        // return pool.request().query("select * from productsort")
+        return pool.request()
+            .input('input_parameter', sql.Int, req.query.id)
+            .query("SELECT * FROM productsort where parid = @input_parameter ")
+    }).then(result => {
+        let rows = result.recordset
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.status(200).json(rows);
+        sql.close();
+    }).catch(err => {
+        res.status(500).send({ message: `${err}` })
+        sql.close();
+    });
+});
+
+router.get("/api/all", function(req, res, next) {
+    const sql = require('mssql')
+    new sql.ConnectionPool(config).connect().then(pool => {
+        // return pool.request().query("select * from productsort")
+        return pool.request().query("SELECT * FROM productsort ")
+    }).then(result => {
+        let rows = result.recordset
+            // let results = [];
+            // rows.map((child, index) => {
+            //     if (child.parid !== 0) {
+            //         results.push({ parentId: child.parid })
+            //     }
+            // });
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.status(200).json(rows);
+    }).catch(err => {
+        res.status(500).send({ message: `${err}` })
+        sql.close();
+    });
+});
+
 
 router.get("/api/categoryDetails", function(req, res, next) {
     const sql = require('mssql')
