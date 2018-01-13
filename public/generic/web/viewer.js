@@ -1462,13 +1462,16 @@
                         title = url;
                     }
                 }
-                this.setTitle(title);
+                var queryString = document.location.search.substring(1);
+                var params1 = (0, _ui_utils.parseQueryString)(queryString);
+                this.setTitle(params1.title ? params1.title : '');
             },
             setTitle: function setTitle(title) {
                 if (this.isViewerEmbedded) {
                     return;
                 }
-                // document.title = title;
+
+                document.title = title;
             },
             close: function close() {
                 var errorWrapper = this.appConfig.errorWrapper.container;
