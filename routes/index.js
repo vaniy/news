@@ -157,7 +157,7 @@ router.get("/api/categorys", function(req, res, next) {
         // return pool.request().query("select * from productsort")
         return pool.request()
             .input('input_parameter', sql.Int, req.query.id)
-            .query("SELECT * FROM productsort where parid = @input_parameter ")
+            .query("SELECT * FROM productsort a inner join glzhidu b on a.id = b.leixing where a.parid = @input_parameter ")
     }).then(result => {
         let rows = result.recordset
         res.setHeader('Access-Control-Allow-Origin', '*')
