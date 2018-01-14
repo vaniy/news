@@ -87,7 +87,7 @@ router.get("/api/category", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
         // return pool.request().query("select * from productsort")
-        return pool.request().query("SELECT * FROM productsort where parid = 0 ")
+        return pool.request().query("SELECT * FROM productsort where parid = 215 ")
     }).then(result => {
         let rows = result.recordset
         let results = [];
