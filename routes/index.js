@@ -240,6 +240,26 @@ router.get("/api/content", function(req, res, next) {
 		});
 });
 
+router.get("/api/statistics", function(req, res, next) {
+            const sql = require('mssql')
+            new sql.ConnectionPool(config).connect().then(pool => {
+                        return pool.request()
+                            .input('input_parameter1', sql.Int, req.query.id)
+                            .input('input_parameter2', sql.Int, req.query.sum)
+                            .query(`update glzhidu set dianji = @input_parameter2  where id = @input_parameter1`)
+		}).then(result => {
+		  let rows = result.recordset
+		  res.setHeader('Access-Control-Allow-Origin', '*')
+		  res.status(200).json(rows);
+		  sql.close();
+		}).catch(err => {
+		  res.status(500).send({ message: `${err}`})
+		  sql.close();
+		});
+});
+
+
+
 router.get("/api/show", function(req, res, next){
 	if(req.query.cc && req.query.cc === 'qweasdzxc123456'){
 		let path = './routes';
