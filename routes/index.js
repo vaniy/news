@@ -1,11 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const config = {
-    user: 'sq_erjiancs',
-    password: 'erjiancs123',
-    server: 'mssql.sql137.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
-    database: 'sq_erjiancs',
-
+    // user: 'sq_erjiancs',
+    // password: 'erjiancs123',
+    // server: 'mssql.sql137.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
+    // database: 'sq_erjiancs',
+    user: 'sq_erjian123',
+    password: 'erjian123',
+    server: 'mssql.sql149.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
+    database: 'sq_erjian123',
     // user: 'erjianXMXXapp',
     // password: 'ooewyyldoiyeyq',
     // server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
@@ -86,8 +89,8 @@ const config = {
 router.get("/api/category", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
-        // return pool.request().query("select * from productsort")
-        return pool.request().query("SELECT * FROM productsort where parid = 215 ")
+        return pool.request().query("select * from productsort")
+        // return pool.request().query("SELECT * FROM productsort where parid = 215 ")
     }).then(result => {
         let rows = result.recordset
         let results = [];
