@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const config = {
-    user: 'sq_erjiancs',
+    // user: 'sq_erjiancs',
+    // password: 'erjiancs123',
+    // server: 'mssql.sql137.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
+    // database: 'sq_erjiancs',
+    user: 'sq_erjiancs1',
     password: 'erjiancs123',
-    server: 'mssql.sql137.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
-    database: 'sq_erjiancs',
-    // user: 'sq_erjian123',
-    // password: 'erjian123',
-    // server: 'mssql.sql149.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
-    // database: 'sq_erjian123',
+    server: 'mssql.sql123.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
+    database: 'sq_erjiancs1',
     // user: 'erjianXMXXapp',
     // password: 'ooewyyldoiyeyq',
     // server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
