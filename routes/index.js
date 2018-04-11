@@ -198,7 +198,7 @@ router.get("/api/categoryDetails", function(req, res, next) {
     new sql.ConnectionPool(config).connect().then(pool => {
         return pool.request()
         // .input('input_parameter', sql.VarChar, `2018`).query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where  b.wenjian like  @input_parameter order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
-        .input('input_parameter', sql.VarChar, `2017`).query(`select * from glzhidu where  wenjian like  @input_parameter order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
+        .input('input_parameter', sql.NVarChar, `2017`).query(`select * from glzhidu where  wenjian like  @input_parameter order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
     }).then(result => {
         let rows = result.recordset
         res.setHeader('Access-Control-Allow-Origin', '*')
