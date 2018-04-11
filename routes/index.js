@@ -217,7 +217,7 @@ router.get("/api/detail", function(req, res, next) {
             new sql.ConnectionPool(config).connect().then(pool => {
                         return pool.request()
                             .input('input_parameter', sql.Int, req.query.id)
-                            .query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.id ? `where b.leixing = @input_parameter and a.parid = 215` : ''}`)
+                            .query(`select * from glzhidu ${req.query.id ? `where leixing = @input_parameter` : ''}`)
 }).then(result => {
   let rows = result.recordset
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -234,7 +234,7 @@ router.get("/api/content", function(req, res, next) {
             new sql.ConnectionPool(config).connect().then(pool => {
                         return pool.request()
                             .input('input_parameter', sql.NVarChar, `%${req.query.keywords}%`)
-                            .query(`select * from glzhidu ${req.query.keywords ? `where sfxs = 0 and a.parid = 215 and (bianh like @input_parameter or biaoti like @input_parameter)` : ''}`)
+                            .query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like @input_parameter or b.biaoti like @input_parameter)` : ''}`)
 		}).then(result => {
 		  let rows = result.recordset
 		  res.setHeader('Access-Control-Allow-Origin', '*')
