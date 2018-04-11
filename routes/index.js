@@ -196,7 +196,7 @@ router.get("/api/all", function(req, res, next) {
 router.get("/api/categoryDetails", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
-        return pool.request().query(`select * from productsort a inner join glzhidu b on a.id = b.leixing and b.sfxs = 0 order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
+        return pool.request().query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
     }).then(result => {
         let rows = result.recordset
         res.setHeader('Access-Control-Allow-Origin', '*')
