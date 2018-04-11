@@ -196,7 +196,7 @@ router.get("/api/all", function(req, res, next) {
 router.get("/api/categoryDetails", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
-        return pool.request().query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
+        return pool.request().query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 1 order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
     }).then(result => {
         let rows = result.recordset
         res.setHeader('Access-Control-Allow-Origin', '*')
@@ -231,7 +231,7 @@ router.get("/api/content", function(req, res, next) {
             new sql.ConnectionPool(config).connect().then(pool => {
                         return pool.request()
                             .input('input_parameter', sql.NVarChar, `%${req.query.keywords}%`)
-                            .query(`select * from glzhidu ${req.query.keywords ? `where sfxs = 0 and (bianh like @input_parameter or biaoti like @input_parameter)` : ''}`)
+                            .query(`select * from glzhidu ${req.query.keywords ? `where sfxs = 1 and (bianh like @input_parameter or biaoti like @input_parameter)` : ''}`)
 		}).then(result => {
 		  let rows = result.recordset
 		  res.setHeader('Access-Control-Allow-Origin', '*')
