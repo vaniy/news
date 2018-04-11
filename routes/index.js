@@ -91,7 +91,7 @@ router.get("/api/category", function(req, res, next) {
     new sql.ConnectionPool(config).connect().then(pool => {
         // return pool.request().query("select * from productsort")
         // return pool.request().query("SELECT * FROM productsort where parid = 215 or parid = 217")
-        return pool.request().query("SELECT * FROM productsort where id = 215 or id = 217")
+        return pool.request().query("SELECT * FROM productsort where parid = 215")
     }).then(result => {
         let rows = result.recordset
         let results = [];
@@ -198,7 +198,7 @@ router.get("/api/categoryDetails", function(req, res, next) {
     const sql = require('mssql')
     new sql.ConnectionPool(config).connect().then(pool => {
         return pool.request()
-        .query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 order by ${req.query.order ? 'b.dianji DESC':'a.id DESC'}`)
+        .query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 and a.parid = 215 order by ${req.query.order ? 'b.dianji DESC':'a.id DESC'}`)
         // .input('input_parameter', sql.NVarChar, `2017`).query(`select * from glzhidu where  wenjian like  @input_parameter order by ${req.query.order ? 'b.dianji DESC':'shijian'}`)
     }).then(result => {
         let rows = result.recordset
@@ -234,7 +234,7 @@ router.get("/api/content", function(req, res, next) {
             new sql.ConnectionPool(config).connect().then(pool => {
                         return pool.request()
                             .input('input_parameter', sql.NVarChar, `%${req.query.keywords}%`)
-                            .query(`select * from glzhidu ${req.query.keywords ? `where sfxs = 0 and (bianh like @input_parameter or biaoti like @input_parameter)` : ''}`)
+                            .query(`select * from glzhidu ${req.query.keywords ? `where sfxs = 0 and a.parid = 215 and (bianh like @input_parameter or biaoti like @input_parameter)` : ''}`)
 		}).then(result => {
 		  let rows = result.recordset
 		  res.setHeader('Access-Control-Allow-Origin', '*')
