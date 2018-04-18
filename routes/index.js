@@ -5,10 +5,14 @@ const config = {
     // password: 'erjiancs123',
     // server: 'mssql.sql137.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
     // database: 'sq_erjiancs',
-    user: 'sq_erjiancs1',
-    password: 'erjiancs123',
-    server: 'mssql.sql123.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
-    database: 'sq_erjiancs1',
+    // user: 'sq_erjiancs1',
+    // password: 'erjiancs123',
+    // server: 'mssql.sql123.cdncenter.net', // You can use 'localhost\\instance' to connect to named instance
+    // database: 'sq_erjiancs1',
+    user: 'sa',
+    password: '123456abc',
+    server: '121.41.48.29', // You can use 'localhost\\instance' to connect to named instance
+    database: 'erjianapp',
     // user: 'erjianXMXXapp',
     // password: 'ooewyyldoiyeyq',
     // server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
