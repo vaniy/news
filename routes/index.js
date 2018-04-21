@@ -108,7 +108,7 @@ router.get("/api/category", function (req, res, next) {
             results.push(child)
             // }
         });
-        connection.query(`SELECT * FROM productsort where id = 215`, function (error, rows, fields) {
+        connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
             if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
             results.map((cld, idx) => {
                 cld.child = [];
