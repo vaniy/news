@@ -101,7 +101,7 @@ connection.connect();
 
 router.get("/api/category", function (req, res, next) {
     connection.query(`SELECT * FROM productsort where id = 215`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         let results = [];
         rows.map((child, index) => {
             // if (child.parid !== 0) {
@@ -109,7 +109,7 @@ router.get("/api/category", function (req, res, next) {
             // }
         });
         connection.query(`SELECT * FROM productsort where id = 215`, function (error, rows, fields) {
-            if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+            if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
             results.map((cld, idx) => {
                 cld.child = [];
                 rows.map((child, index) => {
@@ -205,7 +205,7 @@ router.get("/api/category", function (req, res, next) {
 
 router.get("/api/categorys", function (req, res, next) {
     connection.query(`SELECT * FROM productsort a inner join glzhidu b on a.id = b.leixing where a.id = ${req.query.id} `, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
@@ -229,7 +229,7 @@ router.get("/api/categorys", function (req, res, next) {
 
 router.get("/api/all", function (req, res, next) {
     connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
@@ -258,7 +258,7 @@ router.get("/api/all", function (req, res, next) {
 
 router.get("/api/categoryDetails", function (req, res, next) {
     connection.query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 and a.parid = 215 order by ${req.query.order ? 'b.dianji DESC' : 'a.id DESC'}`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
@@ -283,7 +283,7 @@ router.get("/api/categoryDetails", function (req, res, next) {
 
 router.get("/api/detail", function (req, res, next) {
     connection.query(`select * from glzhidu ${req.query.id ? `where leixing = ${req.query.id}` : ''}`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
@@ -307,7 +307,7 @@ router.get("/api/detail", function (req, res, next) {
 
 router.get("/api/content", function (req, res, next) {
     connection.query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like "${req.query.keywords}" or b.biaoti like "${req.query.keywords}")` : ''}`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
@@ -331,7 +331,7 @@ router.get("/api/content", function (req, res, next) {
 
 router.get("/api/statistics", function (req, res, next) {
     connection.query(`update glzhidu set dianji = ${req.query.sum}  where id = ${req.query.id}`, function (error, rows, fields) {
-        if (error || !results) { res.status(200).send({ status: 'failed' }); return; }
+        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
         // res.status(200).send({ results: products, status: 'success' });
