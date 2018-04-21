@@ -306,7 +306,7 @@ router.get("/api/detail", function (req, res, next) {
 });
 
 router.get("/api/content", function (req, res, next) {
-    connection.query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like ? or b.biaoti like ?)` : ''}`, ["2013","2013"], function (error, rows, fields) {
+    connection.query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like "?" or b.biaoti like "?")` : ''}`, ["2013","2013"], function (error, rows, fields) {
         if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.status(200).json(rows);
