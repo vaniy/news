@@ -11,7 +11,7 @@ const config = {
     // database: 'sq_erjiancs1',
     user: 'liyue123',
     password: 'liyue123!@#',
-    server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
+    server: 'localhost\\instance', // You can use 'localhost\\instance' to connect to named instance
     database: 'glzhidu',
     // user: 'erjianXMXXapp',
     // password: 'ooewyyldoiyeyq',
