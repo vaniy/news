@@ -23,15 +23,42 @@ const config = {
     //     encrypt: true // Use this if you're on Windows Azure
     // }
 }
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'liyue123',
-    // password: 'Qwaszx123@',
-    password: 'liyue123!@#',
-    database: 'glzhidu'
-});
 
-connection.connect();
+function handleDisconnection() {
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'liyue123',
+        // password: 'Qwaszx123@',
+        password: 'liyue123!@#',
+        database: 'glzhidu'
+    });
+     connection.connect(function(err) {
+         if(err) {
+             setTimeout('handleDisconnection()', 2000);
+         }
+     });
+ 
+     connection.on('error', function(err) {
+         logger.error('db error', err);
+         if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+             logger.error('db error执行重连:'+err.message);
+             handleDisconnection();
+         } else {
+             throw err;
+         }
+     });
+     exports.connection = connection;
+ }
+ handleDisconnection();
+// var connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'liyue123',
+//     // password: 'Qwaszx123@',
+//     password: 'liyue123!@#',
+//     database: 'glzhidu'
+// });
+
+// connection.connect();
 // router.get("/api/category", function(req, res, next) {
 //     const sql = require('mssql')
 //     new sql.ConnectionPool(config).connect().then(pool => {
