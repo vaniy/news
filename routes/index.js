@@ -24,39 +24,39 @@ const config = {
     // }
 }
 
-function handleDisconnection() {
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'liyue123',
-        // password: 'Qwaszx123@',
-        password: 'liyue123!@#',
-        database: 'glzhidu'
-    });
-     connection.connect(function(err) {
-         if(err) {
-             setTimeout('handleDisconnection()', 2000);
-         }
-     });
- 
-     connection.on('error', function(err) {
-         console.log('db error', err);
-         if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-            console.log('db error执行重连:'+err.message);
-             handleDisconnection();
-         } else {
-             throw err;
-         }
-     });
-     exports.connection = connection;
- }
- handleDisconnection();
-// var connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'liyue123',
-//     // password: 'Qwaszx123@',
-//     password: 'liyue123!@#',
-//     database: 'glzhidu'
-// });
+// function handleDisconnection() {
+//     var connection = mysql.createConnection({
+//         host: 'localhost',
+//         user: 'liyue123',
+//         // password: 'Qwaszx123@',
+//         password: 'liyue123!@#',
+//         database: 'glzhidu'
+//     });
+//      connection.connect(function(err) {
+//          if(err) {
+//              setTimeout('handleDisconnection()', 2000);
+//          }
+//      });
+
+//      connection.on('error', function(err) {
+//          console.log('db error', err);
+//          if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+//             console.log('db error执行重连:'+err.message);
+//              handleDisconnection();
+//          } else {
+//              throw err;
+//          }
+//      });
+//      exports.connection = connection;
+//  }
+//  handleDisconnection();
+var pool = mysql.createPool({
+    host: 'localhost',
+    user: 'liyue123',
+    // password: 'Qwaszx123@',
+    password: 'liyue123!@#',
+    database: 'glzhidu'
+});
 
 // connection.connect();
 // router.get("/api/category", function(req, res, next) {
@@ -127,42 +127,49 @@ function handleDisconnection() {
 // });
 
 router.get("/api/category", function (req, res, next) {
-    connection.query(`SELECT * FROM productsort where id = 215`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        let results = [];
-        rows.map((child, index) => {
-            // if (child.parid !== 0) {
-            results.push(child)
-            // }
-        });
-        connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
-            if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-            results.map((cld, idx) => {
-                cld.child = [];
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`SELECT * FROM productsort where id = 215`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                let results = [];
                 rows.map((child, index) => {
-                    if (child.parid === cld.id) {
-                        cld.child.push({
-                            id: child.id,
-                            category: child['类别'],
-                            sort: child.sort,
-                            grade: child.grade,
-                            parid: child.parid,
-                            cnlen: child.cnlen,
-                            enlen: child.enlen,
-                            secret: child.secret,
-                            zoom: child.zoom,
-                            cnpic: child.cnpic,
-                            enpic: child.enpic
+                    // if (child.parid !== 0) {
+                    results.push(child)
+                    // }
+                });
+                connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
+                    if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                    results.map((cld, idx) => {
+                        cld.child = [];
+                        rows.map((child, index) => {
+                            if (child.parid === cld.id) {
+                                cld.child.push({
+                                    id: child.id,
+                                    category: child['类别'],
+                                    sort: child.sort,
+                                    grade: child.grade,
+                                    parid: child.parid,
+                                    cnlen: child.cnlen,
+                                    enlen: child.enlen,
+                                    secret: child.secret,
+                                    zoom: child.zoom,
+                                    cnpic: child.cnpic,
+                                    enpic: child.enpic
+                                })
+                            }
                         })
-                    }
-                })
-            })
-            res.setHeader('Access-Control-Allow-Origin', '*')
-            res.status(200).json(results);
-            // res.status(200).send({ results: products, status: 'success' });
-        });
-        // res.status(200).send({ results: products, status: 'success' });
-    });
+                    })
+                    res.setHeader('Access-Control-Allow-Origin', '*')
+                    res.status(200).json(results);
+                    // res.status(200).send({ results: products, status: 'success' });
+                });
+                connection.release();
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+        }
+    })
     // const sql = require('mssql')
     // new sql.ConnectionPool(config).connect().then(pool => {
     //     // return pool.request().query("select * from productsort")
@@ -231,12 +238,19 @@ router.get("/api/category", function (req, res, next) {
 });
 
 router.get("/api/categorys", function (req, res, next) {
-    connection.query(`SELECT * FROM productsort a inner join glzhidu b on a.id = b.leixing where a.id = ${req.query.id} `, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
-    });
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`SELECT * FROM productsort a inner join glzhidu b on a.id = b.leixing where a.id = ${req.query.id} `, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
+    })
     // const sql = require('mssql')
     // new sql.ConnectionPool(config).connect().then(pool => {
     //     // return pool.request().query("select * from productsort")
@@ -255,12 +269,19 @@ router.get("/api/categorys", function (req, res, next) {
 });
 
 router.get("/api/all", function (req, res, next) {
-    connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
-    });
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`SELECT * FROM productsort`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
+    })
 
     // const sql = require('mssql')
     // new sql.ConnectionPool(config).connect().then(pool => {
@@ -284,13 +305,20 @@ router.get("/api/all", function (req, res, next) {
 
 
 router.get("/api/categoryDetails", function (req, res, next) {
-    connection.query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 and a.parid = 215 order by ${req.query.order ? 'b.dianji DESC' : 'a.id DESC'}`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
-    });
 
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`select * from productsort a inner join glzhidu b on a.id = b.leixing where b.sfxs = 0 and a.parid = 215 order by ${req.query.order ? 'b.dianji DESC' : 'a.id DESC'}`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
+    });
     // const sql = require('mssql')
     // new sql.ConnectionPool(config).connect().then(pool => {
     //     return pool.request()
@@ -309,12 +337,19 @@ router.get("/api/categoryDetails", function (req, res, next) {
 
 
 router.get("/api/detail", function (req, res, next) {
-    connection.query(`select * from glzhidu ${req.query.id ? `where leixing = ${req.query.id}` : ''}`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
-    });
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`select * from glzhidu ${req.query.id ? `where leixing = ${req.query.id}` : ''}`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
+    })
 
     // const sql = require('mssql')
     // new sql.ConnectionPool(config).connect().then(pool => {
@@ -333,11 +368,18 @@ router.get("/api/detail", function (req, res, next) {
 });
 
 router.get("/api/content", function (req, res, next) {
-    connection.query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like "%${req.query.keywords}%" or b.biaoti like "%${req.query.keywords}%")` : ''}`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`select * from glzhidu b inner join productsort a on a.id = b.leixing ${req.query.keywords ? `where b.sfxs = 0 and a.parid = 215 and (b.bianh like "%${req.query.keywords}%" or b.biaoti like "%${req.query.keywords}%")` : ''}`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
     });
 
     // const sql = require('mssql')
@@ -357,11 +399,18 @@ router.get("/api/content", function (req, res, next) {
 });
 
 router.get("/api/statistics", function (req, res, next) {
-    connection.query(`update glzhidu set dianji = ${req.query.sum}  where id = ${req.query.id}`, function (error, rows, fields) {
-        if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
-        res.setHeader('Access-Control-Allow-Origin', '*')
-        res.status(200).json(rows);
-        // res.status(200).send({ results: products, status: 'success' });
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            res.status(200).json('failed');
+        } else {
+            connection.query(`update glzhidu set dianji = ${req.query.sum}  where id = ${req.query.id}`, function (error, rows, fields) {
+                if (error || !rows) { res.status(200).send({ status: 'failed' }); return; }
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.status(200).json(rows);
+                // res.status(200).send({ results: products, status: 'success' });
+            });
+            connection.release();
+        }
     });
 
     // const sql = require('mssql')
